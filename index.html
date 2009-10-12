@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<script src="http://www.prototypejs.org/assets/2009/6/16/prototype.js"></script>
+	<script src="utilities.js" type="text/javascript" charset="utf-8"></script>
+	<script src="JSSyntaxHighlighter.js.php" type="text/javascript" charset="utf-8"></script>
+
+	<title>SourceView</title>
+	
+</head>
+
+<body>
+
+<script type="text/javascript" charset="utf-8">
+	var fr = document.createElement("iframe");
+	document.body.appendChild(fr);
+	fr.style.width = "100%";
+	fr.style.height = "100%";
+	fr.src = "src.js";
+    fr.addStyleClass("source-view-frame");
+    fr.setAttribute("viewsource", "true");
+	fr.addEventListener("load", function() {
+	    var headElement = fr.contentDocument.getElementsByTagName("head")[0];
+        if (!headElement) {
+            headElement = fr.contentDocument.createElement("head");
+            fr.contentDocument.documentElement.insertBefore(headElement, fr.contentDocument.documentElement.firstChild);
+        }
+
+        var styleElement = fr.contentDocument.createElement("style");
+        headElement.appendChild(styleElement);
+
+        // Add these style rules here since they are specific to the Inspector. They also behave oddly and not
+        // all properties apply if added to view-source.css (becuase it is a user agent sheet.)
+        var styleText = ".webkit-line-number { background-repeat: no-repeat; background-position: right 1px; }\n";
+        styleText += ".webkit-breakpoint .webkit-line-number { color: white; background-image: -webkit-canvas(breakpoint); }\n";
+        styleText += ".webkit-breakpoint-disabled .webkit-line-number { color: white; background-image: -webkit-canvas(breakpoint-disabled); }\n";
+        styleText += ".webkit-execution-line .webkit-line-number { color: transparent; background-image: -webkit-canvas(program-counter); }\n";
+        styleText += ".webkit-breakpoint.webkit-execution-line .webkit-line-number { color: transparent; background-image: -webkit-canvas(breakpoint-program-counter); }\n";
+        styleText += ".webkit-breakpoint-disabled.webkit-execution-line .webkit-line-number { color: transparent; background-image: -webkit-canvas(breakpoint-disabled-program-counter); }\n";
+        styleText += ".webkit-execution-line .webkit-line-content { background-color: rgb(171, 191, 254); outline: 1px solid rgb(64, 115, 244); }\n";
+        styleText += ".webkit-height-sized-to-fit { overflow-y: hidden }\n";
+        styleText += ".webkit-line-content { background-color: white; }\n";
+        styleText += "@-webkit-keyframes fadeout {from {background-color: rgb(255, 255, 120);} to { background-color: white;}}\n";
+        styleText += ".webkit-highlighted-line .webkit-line-content { background-color: rgb(255, 255, 120); -webkit-animation: 'fadeout' 2s 500ms}\n";
+        styleText += ".webkit-javascript-comment { color: rgb(0, 116, 0); }\n";
+        styleText += ".webkit-javascript-keyword { color: rgb(170, 13, 145); }\n";
+        styleText += ".webkit-javascript-number { color: rgb(28, 0, 207); }\n";
+        styleText += ".webkit-javascript-string { color: rgb(196, 26, 22); }\n";
+        styleText += ".webkit-javascript-regexp { color: orange; }\n";
+
+        styleElement.textContent = styleText;
+        console.profile("aa");
+        var sh = new WebInspector.JavaScriptSourceSyntaxHighlighter(fr.contentDocument.getElementsByTagName("table")[0], null);
+        window.before = fr.contentDocument.getElementsByTagName("table")[0].textContent;
+        sh.process();
+	}, false);
+</script>
+
+</body>
+</html>
